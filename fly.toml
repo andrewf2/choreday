@@ -1,34 +1,29 @@
-# Fly.io configuration for Chore Checker AI.
-# The SQLite DB and uploaded photos live on a single persistent volume (/data),
-# so this app runs as ONE machine (a volume can't be shared across machines).
+# fly.toml app configuration file generated for choreday on 2026-06-09T20:41:56Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "choreday"
-primary_region = "den"
+app = 'choreday'
+primary_region = 'dfw'
 
 [build]
 
 [env]
-  # SQLite database on the volume.
-  CHOREDAY_DATABASE_URL = "file:/data/prod.db"
-  # Uploaded photos on the volume.
-  UPLOADS_DIR = "/data/uploads"
-  # Model used for AI evaluation (override here if desired).
-  CHORE_AI_MODEL = "claude-sonnet-4-6"
-  # ANTHROPIC_API_KEY is NOT set here — store it as a secret:
-  #   fly secrets set ANTHROPIC_API_KEY=sk-ant-...
+  CHOREDAY_DATABASE_URL = 'file:/data/prod.db'
+  CHORE_AI_MODEL = 'claude-sonnet-4-6'
+  UPLOADS_DIR = '/data/uploads'
+
+[[mounts]]
+  source = 'choreday_data'
+  destination = '/data'
 
 [http_service]
   internal_port = 3500
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
-  # Single instance, and allow it to scale to zero when idle to save money.
   min_machines_running = 0
 
-[[mounts]]
-  source = "choreday_data"
-  destination = "/data"
-
 [[vm]]
-  size = "shared-cpu-1x"
-  memory = "512mb"
+  size = 'shared-cpu-1x'
+  memory = '512mb'

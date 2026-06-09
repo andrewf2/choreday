@@ -1,0 +1,128 @@
+// Chore Checker AI — data model
+// SQLite for the MVP. Lightweight parent/child profiles (no real auth).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  PARENT
+  CHILD
+}
+
+enum ChoreStatus {
+  ACTIVE
+  PENDING_REVIEW
+  COMPLETED
+}
+
+enum SubmissionStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+// Overall AI verdict for a submission.
+enum OverallStatus {
+  pass
+  needs_work
+  fail
+}
+
+// Per-standard AI verdict. Mirrors the spec: DONE / NOT_DONE / UNCLEAR.
+enum ItemStatus {
+  done
+  not_done
+  unclear
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  username     String   @unique
+  passwordHash String
+  role         Role
+  // Children link to their parent. Null for parents.
+  parentId  String?
+  parent    User?    @relation("ParentChildren", fields: [parentId], references: [id])
+  children  User[]   @relation("ParentChildren")
+  createdAt DateTime @default(now())
+
+  choresCreated  Chore[]      @relation("ChoresCreatedBy")
+  choresAssigned Chore[]      @relation("ChoresAssignedTo")
+  submissions    Submission[]
+}
+
+model Chore {
+  id               String      @id @default(cuid())
+  name             String
+  description      String      @default("")
+  definitionOfDone String      @default("")
+  status           ChoreStatus @default(ACTIVE)
+  dueDate          DateTime?
+  createdAt        DateTime    @default(now())
+
+  assignedChildId String
+  assignedChild   User   @relation("ChoresAssignedTo", fields: [assignedChildId], references: [id])
+
+  createdById String
+  createdBy   User   @relation("ChoresCreatedBy", fields: [createdById], references: [id])
+
+  standards   Standard[]
+  submissions Submission[]
+}
+
+// A single checklist item the AI grades against.
+model Standard {
+  id      String @id @default(cuid())
+  text    String
+  order   Int    @default(0)
+  choreId String
+  chore   Chore  @relation(fields: [choreId], references: [id], onDelete: Cascade)
+}
+
+model Submission {
+  id               String           @id @default(cuid())
+  note             String?
+  status           SubmissionStatus @default(PENDING_REVIEW)
+  aiScore          Int?
+  aiOverallStatus  OverallStatus?
+  // True once a parent has manually overridden the AI's decision.
+  parentOverridden Boolean          @default(false)
+  // Set when the AI evaluation could not run (e.g. API failure).
+  aiError          String?
+  createdAt        DateTime         @default(now())
+
+  choreId String
+  chore   Chore  @relation(fields: [choreId], references: [id], onDelete: Cascade)
+
+  childId String
+  child   User   @relation(fields: [childId], references: [id])
+
+  photos      SubmissionPhoto[]
+  itemResults ItemResult[]
+}
+
+model SubmissionPhoto {
+  id           String     @id @default(cuid())
+  path         String // relative path under uploads/
+  mediaType    String
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}
+
+// One row per standard, captured from the AI response for a submission.
+model ItemResult {
+  id           String     @id @default(cuid())
+  standardText String
+  status       ItemStatus
+  feedback     String     @default("")
+  order        Int        @default(0)
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}

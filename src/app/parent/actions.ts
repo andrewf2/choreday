@@ -4,6 +4,49 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
+import {
+  hashPassword,
+  normalizeUsername,
+  isValidUsername,
+  isUsernameTaken,
+  MIN_PASSWORD_LENGTH,
+} from "@/lib/auth";
+
+// Create a child account linked to the signed-in parent.
+export async function createChild(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "PARENT") redirect("/");
+
+  const name = String(formData.get("name") ?? "").trim();
+  const username = normalizeUsername(String(formData.get("username") ?? ""));
+  const password = String(formData.get("password") ?? "");
+
+  if (!name || !username || !password) {
+    redirect("/parent/children/new?error=missing");
+  }
+  if (!isValidUsername(username)) {
+    redirect("/parent/children/new?error=username");
+  }
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    redirect("/parent/children/new?error=short");
+  }
+  if (await isUsernameTaken(username)) {
+    redirect("/parent/children/new?error=taken");
+  }
+
+  await prisma.user.create({
+    data: {
+      name,
+      username,
+      passwordHash: await hashPassword(password),
+      role: "CHILD",
+      parentId: user.id,
+    },
+  });
+
+  revalidatePath("/parent");
+  redirect("/parent/children");
+}
 
 // Create a chore with its checklist standards. Parent-only.
 export async function createChore(formData: FormData) {

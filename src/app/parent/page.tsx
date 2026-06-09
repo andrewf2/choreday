@@ -35,12 +35,20 @@ export default async function ParentDashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Your chores</h1>
-        <Link
-          href="/parent/chores/new"
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
-        >
-          + New chore
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/parent/children"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            Kids
+          </Link>
+          <Link
+            href="/parent/chores/new"
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+          >
+            + New chore
+          </Link>
+        </div>
       </div>
 
       <section>

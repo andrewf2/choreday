@@ -39,8 +39,15 @@ export default async function NewChorePage({
       )}
 
       {children.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
-          You have no children profiles yet.
+        <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-600">
+          You haven&rsquo;t added any kids yet.{" "}
+          <Link
+            href="/parent/children/new"
+            className="font-medium text-indigo-600 hover:text-indigo-700"
+          >
+            Add a child
+          </Link>{" "}
+          first, then you can assign them chores.
         </p>
       ) : (
         <ChoreForm

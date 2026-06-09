@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { login } from "@/app/actions";
 import { getCurrentUser } from "@/lib/session";
@@ -74,7 +75,17 @@ export default async function LoginPage({
         </button>
       </form>
 
-      <p className="mt-6 text-center text-xs text-slate-400">
+      <p className="mt-6 text-center text-sm text-slate-500">
+        New here?{" "}
+        <Link
+          href="/signup"
+          className="font-medium text-indigo-600 hover:text-indigo-700"
+        >
+          Create a family account
+        </Link>
+      </p>
+
+      <p className="mt-4 text-center text-xs text-slate-400">
         Demo logins: <span className="font-mono">sam</span>,{" "}
         <span className="font-mono">ava</span>,{" "}
         <span className="font-mono">leo</span> — password{" "}

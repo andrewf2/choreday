@@ -7,14 +7,28 @@ const prisma = new PrismaClient();
 const DEMO_PASSWORD = "password";
 const hash = (pw: string) => bcrypt.hash(pw, 10);
 
-async function main() {
-  // Clean slate so the seed is idempotent.
+async function wipe() {
   await prisma.itemResult.deleteMany();
   await prisma.submissionPhoto.deleteMany();
   await prisma.submission.deleteMany();
   await prisma.standard.deleteMany();
   await prisma.chore.deleteMany();
   await prisma.user.deleteMany();
+}
+
+async function main() {
+  // Idempotent: if accounts already exist, do nothing. This is safe to run on
+  // every container start (the Dockerfile calls it after migrate deploy) — it
+  // won't wipe or duplicate data. Set SEED_FORCE=1 to wipe and reseed.
+  const force = process.env.SEED_FORCE === "1";
+  const existingUsers = await prisma.user.count();
+  if (existingUsers > 0 && !force) {
+    console.log(
+      `Seed skipped: ${existingUsers} users already exist (set SEED_FORCE=1 to reset).`,
+    );
+    return;
+  }
+  if (force) await wipe();
 
   const passwordHash = await hash(DEMO_PASSWORD);
 

@@ -42,5 +42,6 @@ COPY --from=builder /app/prisma ./prisma
 
 EXPOSE 3500
 
-# Apply any pending migrations against the volume DB, then start the server.
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
+# On start: apply pending migrations, then seed (idempotent — only creates the
+# demo accounts on a fresh DB; skips if users already exist), then run the app.
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && npm run start"]

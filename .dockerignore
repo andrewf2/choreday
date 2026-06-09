@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+README.md
+npm-debug.log*
+
+# Local-only data and secrets — never bake into the image.
+.env
+.env.*
+uploads
+prisma/*.db
+prisma/*.db-journal
+
+.DS_Store
+.vscode
+.idea

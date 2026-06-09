@@ -3,7 +3,10 @@ import path from "node:path";
 import crypto from "node:crypto";
 
 // Photos live outside public/ so access goes through a controlled route.
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+// Configurable via UPLOADS_DIR (e.g. /data/uploads on the Fly volume in production).
+const UPLOAD_DIR = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.join(process.cwd(), "uploads");
 
 const EXT_BY_MIME: Record<string, string> = {
   "image/jpeg": "jpg",

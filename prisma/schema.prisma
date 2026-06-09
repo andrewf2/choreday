@@ -7,7 +7,9 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  // Namespaced to avoid colliding with any DATABASE_URL already in the shell.
+  // Local dev -> prisma/dev.db; production -> Fly volume (file:/data/prod.db).
+  url      = env("CHOREDAY_DATABASE_URL")
 }
 
 enum Role {

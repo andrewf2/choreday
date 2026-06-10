@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+
+const MAX_PHOTOS = 8;
 
 // Downscale a photo in the browser before upload: caps the long edge at 1568px
 // (about the most Claude uses for vision) and re-encodes as JPEG. Cuts upload
@@ -35,6 +37,12 @@ async function downscaleImage(
   }
 }
 
+interface Photo {
+  id: number;
+  file: File;
+  url: string;
+}
+
 export function SubmitForm({
   action,
   choreId,
@@ -42,28 +50,55 @@ export function SubmitForm({
   action: (formData: FormData) => void;
   choreId: string;
 }) {
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [hasPhoto, setHasPhoto] = useState(false);
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [preparing, setPreparing] = useState(false);
   const [isPending, startTransition] = useTransition();
   const fileRef = useRef<HTMLInputElement>(null);
   const noteRef = useRef<HTMLTextAreaElement>(null);
+  const nextId = useRef(0);
 
   const busy = preparing || isPending;
 
+  // Revoke any outstanding object URLs on unmount.
+  useEffect(() => {
+    return () => photos.forEach((p) => URL.revokeObjectURL(p.url));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function onFilesChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
-    setPreviews(files.map((f) => URL.createObjectURL(f)));
-    setHasPhoto(files.length > 0);
+    const incoming = Array.from(e.target.files ?? []);
+    // Reset the input so picking the same file again still fires onChange.
+    e.target.value = "";
+    if (incoming.length === 0) return;
+
+    const room = MAX_PHOTOS - photos.length;
+    if (room <= 0) {
+      setError(`You can attach up to ${MAX_PHOTOS} photos.`);
+      return;
+    }
+    const added = incoming.slice(0, room).map((file) => ({
+      id: nextId.current++,
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setError(incoming.length > room ? `Only the first ${MAX_PHOTOS} photos were kept.` : null);
+    setPhotos((prev) => [...prev, ...added]);
+  }
+
+  function removePhoto(id: number) {
+    setPhotos((prev) => {
+      const target = prev.find((p) => p.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      return prev.filter((p) => p.id !== id);
+    });
     setError(null);
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const files = Array.from(fileRef.current?.files ?? []);
-    if (files.length === 0) {
-      setError("Please choose at least one photo.");
+    if (photos.length === 0) {
+      setError("Please add at least one photo.");
       return;
     }
 
@@ -72,47 +107,79 @@ export function SubmitForm({
       const fd = new FormData();
       fd.set("choreId", choreId);
       fd.set("note", noteRef.current?.value ?? "");
-      for (const f of files) {
-        fd.append("photos", await downscaleImage(f));
+      for (const p of photos) {
+        fd.append("photos", await downscaleImage(p.file));
       }
       // Hand off to the server action (it redirects on completion).
       startTransition(() => action(fd));
     } catch {
-      setError("Something went wrong preparing your photo. Please try again.");
+      setError("Something went wrong preparing your photos. Please try again.");
       setPreparing(false);
     }
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <label className="mb-1 block text-sm font-medium text-ink">
-          Photo(s)
-        </label>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          multiple
-          onChange={onFilesChange}
-          className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-lg file:border-0 file:bg-coral/10 file:px-4 file:py-2 file:text-sm file:font-medium file:text-coral hover:file:bg-coral/20"
-        />
-      </div>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={onFilesChange}
+        className="hidden"
+      />
 
-      {previews.length > 0 && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {previews.map((src, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={i}
-              src={src}
-              alt="Preview"
-              className="w-full rounded-xl border border-black/5 object-cover"
-            />
-          ))}
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <label className="block text-sm font-medium text-ink">
+            Photos{" "}
+            <span className="text-xs font-normal text-ink-soft">
+              ({photos.length}/{MAX_PHOTOS})
+            </span>
+          </label>
+          {photos.length > 0 && photos.length < MAX_PHOTOS && (
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="text-sm font-semibold text-coral hover:text-coral/80"
+            >
+              + Add more
+            </button>
+          )}
         </div>
-      )}
+
+        {photos.length === 0 ? (
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="flex w-full flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-black/10 bg-white px-4 py-10 text-sm font-medium text-ink-soft transition hover:border-coral/40 hover:bg-coral/5"
+          >
+            <span className="text-2xl">📸</span>
+            Tap to take or choose photos
+          </button>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {photos.map((p) => (
+              <div key={p.id} className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.url}
+                  alt="Selected"
+                  className="aspect-square w-full rounded-2xl border border-black/5 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => removePhoto(p.id)}
+                  aria-label="Remove photo"
+                  className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-ink text-sm font-bold text-white shadow-md transition hover:bg-coral"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div>
         <label className="mb-1 block text-sm font-medium text-ink">
@@ -123,7 +190,7 @@ export function SubmitForm({
           name="note"
           rows={2}
           placeholder="Anything you want your parent or the AI to know?"
-          className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral"
+          className="w-full rounded-2xl border border-black/10 bg-white px-3.5 py-2.5 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral/30"
         />
       </div>
 
@@ -133,16 +200,12 @@ export function SubmitForm({
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={busy || !hasPhoto}
-        className="btn-primary w-full"
-      >
+      <button type="submit" disabled={busy || photos.length === 0} className="btn-primary w-full">
         {preparing
-          ? "Preparing photo…"
+          ? "Preparing photos…"
           : isPending
             ? "Submitting & checking with AI…"
-            : "Submit for AI review"}
+            : `Submit ${photos.length || ""} ${photos.length === 1 ? "photo" : "photos"} for AI review`}
       </button>
     </form>
   );

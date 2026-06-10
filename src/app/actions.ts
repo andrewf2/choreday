@@ -1,7 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { setCurrentProfile, clearCurrentProfile } from "@/lib/session";
+import {
+  getCurrentUser,
+  startSession,
+  setActiveProfile,
+  clearSession,
+} from "@/lib/session";
+import { resolveSwitchTarget } from "@/lib/family";
 import { prisma } from "@/lib/db";
 import {
   verifyLogin,
@@ -26,7 +32,7 @@ export async function login(formData: FormData) {
     redirect("/?error=invalid");
   }
 
-  await setCurrentProfile(user.id);
+  await startSession(user.id);
   redirect(user.role === "PARENT" ? "/parent" : "/child");
 }
 
@@ -63,12 +69,28 @@ export async function signup(formData: FormData) {
     },
   });
 
-  await setCurrentProfile(user.id);
+  await startSession(user.id);
   redirect("/parent");
+}
+
+// Switch the active profile within the family. Allowed targets are gated by the
+// logged-in principal (see lib/family) — a child can only switch to siblings.
+export async function switchProfile(formData: FormData) {
+  const targetId = String(formData.get("targetId") ?? "");
+  const target = await resolveSwitchTarget(targetId);
+
+  if (!target) {
+    // Not an allowed target — stay where we are.
+    const current = await getCurrentUser();
+    redirect(current?.role === "PARENT" ? "/parent" : current ? "/child" : "/");
+  }
+
+  await setActiveProfile(target.id);
+  redirect(target.role === "PARENT" ? "/parent" : "/child");
 }
 
 // Clear the session and return to the login page.
 export async function logout() {
-  await clearCurrentProfile();
+  await clearSession();
   redirect("/");
 }

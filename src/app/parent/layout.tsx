@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/session";
+import { getCurrentUser, getPrincipalUser } from "@/lib/session";
 import { Header } from "@/components/Header";
 
 export default async function ParentLayout({
@@ -9,6 +9,10 @@ export default async function ParentLayout({
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/");
+  // A child who logged in can never reach the parent area, even by tampering
+  // with the active-profile cookie — the principal is the source of truth.
+  const principal = await getPrincipalUser();
+  if (principal && principal.role !== "PARENT") redirect("/child");
   if (user.role !== "PARENT") redirect("/child");
 
   return (

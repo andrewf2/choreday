@@ -15,14 +15,14 @@ export default async function ChildrenPage() {
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/parent" className="text-sm text-slate-500 hover:text-slate-700">
+        <Link href="/parent" className="text-sm text-ink-soft hover:text-ink">
           ‹ Back
         </Link>
         <div className="mt-1 flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold tracking-tight">Your kids</h1>
           <Link
             href="/parent/children/new"
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+            className="btn-primary"
           >
             + Add child
           </Link>
@@ -30,7 +30,7 @@ export default async function ChildrenPage() {
       </div>
 
       {children.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+        <p className="rounded-xl border border-dashed border-black/5 p-4 text-sm text-ink-soft">
           No kids yet. Add one to start assigning chores.
         </p>
       ) : (
@@ -38,11 +38,11 @@ export default async function ChildrenPage() {
           {children.map((c) => (
             <li
               key={c.id}
-              className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="flex items-center justify-between card p-4"
             >
               <div>
                 <p className="font-medium">{c.name}</p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-ink-soft">
                   @{c.username} · {c._count.choresAssigned} chore
                   {c._count.choresAssigned === 1 ? "" : "s"}
                 </p>

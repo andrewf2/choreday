@@ -12,7 +12,7 @@ const ERRORS: Record<string, string> = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+  "w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral";
 
 export default async function NewChildPage({
   searchParams,
@@ -26,12 +26,12 @@ export default async function NewChildPage({
       <div>
         <Link
           href="/parent/children"
-          className="text-sm text-slate-500 hover:text-slate-700"
+          className="text-sm text-ink-soft hover:text-ink"
         >
           ‹ Back
         </Link>
         <h1 className="mt-1 text-2xl font-bold tracking-tight">Add a child</h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           Create a login for your child. They&rsquo;ll use it to see chores and
           submit photos.
         </p>
@@ -45,10 +45,10 @@ export default async function NewChildPage({
 
       <form
         action={createChild}
-        className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+        className="space-y-4 card p-6"
       >
         <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-ink">
             Child&rsquo;s name
           </label>
           <input id="name" name="name" required placeholder="Ava" className={inputClass} />
@@ -56,7 +56,7 @@ export default async function NewChildPage({
         <div>
           <label
             htmlFor="username"
-            className="mb-1 block text-sm font-medium text-slate-700"
+            className="mb-1 block text-sm font-medium text-ink"
           >
             Username
           </label>
@@ -72,7 +72,7 @@ export default async function NewChildPage({
         <div>
           <label
             htmlFor="password"
-            className="mb-1 block text-sm font-medium text-slate-700"
+            className="mb-1 block text-sm font-medium text-ink"
           >
             Password
           </label>
@@ -84,13 +84,13 @@ export default async function NewChildPage({
             minLength={6}
             className={inputClass}
           />
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-ink-soft">
             At least 6 characters. Share it with your child so they can log in.
           </p>
         </div>
         <button
           type="submit"
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+          className="btn-primary"
         >
           Add child
         </button>

@@ -29,23 +29,23 @@ export default async function SubmitPage({
       <div>
         <Link
           href={`/child/chores/${chore.id}`}
-          className="text-sm text-slate-500 hover:text-slate-700"
+          className="text-sm text-ink-soft hover:text-ink"
         >
           ‹ Back
         </Link>
         <h1 className="mt-1 text-2xl font-bold tracking-tight">
           Submit: {chore.name}
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           Take or upload a photo showing the finished chore.
         </p>
       </div>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 className="mb-2 text-sm font-semibold text-slate-700">
+      <section className="rounded-xl border border-black/5 bg-white p-4">
+        <h2 className="mb-2 text-sm font-semibold text-ink">
           Make sure your photo shows:
         </h2>
-        <ul className="list-inside list-disc space-y-1 text-sm text-slate-600">
+        <ul className="list-inside list-disc space-y-1 text-sm text-ink-soft">
           {chore.standards.map((s) => (
             <li key={s.id}>{s.text}</li>
           ))}

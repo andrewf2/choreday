@@ -21,11 +21,11 @@ export default async function NewChorePage({
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/parent" className="text-sm text-slate-500 hover:text-slate-700">
+        <Link href="/parent" className="text-sm text-ink-soft hover:text-ink">
           ‹ Back
         </Link>
         <h1 className="mt-1 text-2xl font-bold tracking-tight">New chore</h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           Define exactly what &ldquo;done&rdquo; means so the AI can check it.
         </p>
       </div>
@@ -39,11 +39,11 @@ export default async function NewChorePage({
       )}
 
       {children.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-600">
+        <p className="rounded-xl border border-dashed border-black/5 p-4 text-sm text-ink-soft">
           You haven&rsquo;t added any kids yet.{" "}
           <Link
             href="/parent/children/new"
-            className="font-medium text-indigo-600 hover:text-indigo-700"
+            className="font-medium text-coral hover:text-coral"
           >
             Add a child
           </Link>{" "}

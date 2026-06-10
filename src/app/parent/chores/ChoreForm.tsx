@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 const inputClass =
-  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+  "w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral";
 
 export interface ChoreFormInitial {
   name: string;
@@ -121,10 +121,10 @@ export function ChoreForm({
       </Field>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1 block text-sm font-medium text-ink">
           Checklist standards
         </label>
-        <p className="mb-2 text-xs text-slate-500">
+        <p className="mb-2 text-xs text-ink-soft">
           Each is checked independently by the AI.
         </p>
         <div className="space-y-2">
@@ -145,7 +145,7 @@ export function ChoreForm({
                 type="button"
                 onClick={() => removeStandard(i)}
                 disabled={standards.length === 1}
-                className="rounded-lg border border-slate-300 px-3 text-slate-500 transition hover:bg-slate-50 disabled:opacity-40"
+                className="rounded-lg border border-black/10 px-3 text-ink-soft transition hover:bg-black/[0.03] disabled:opacity-40"
                 aria-label="Remove standard"
               >
                 ✕
@@ -156,7 +156,7 @@ export function ChoreForm({
         <button
           type="button"
           onClick={addStandard}
-          className="mt-2 text-sm font-medium text-indigo-600 hover:text-indigo-700"
+          className="mt-2 text-sm font-medium text-coral hover:text-coral"
         >
           + Add standard
         </button>
@@ -178,9 +178,9 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">
+      <label className="mb-1 block text-sm font-medium text-ink">
         {label}
-        {hint && <span className="ml-1 text-xs font-normal text-slate-400">({hint})</span>}
+        {hint && <span className="ml-1 text-xs font-normal text-ink-soft">({hint})</span>}
       </label>
       {children}
     </div>
@@ -199,7 +199,7 @@ function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-60"
+      className="btn-primary"
     >
       {pending ? submittingLabel : label}
     </button>

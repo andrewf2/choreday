@@ -31,23 +31,23 @@ export function SubmissionFeedback({
             key={p.id}
             src={`/api/uploads/${p.path}`}
             alt="Chore submission"
-            className="w-full rounded-xl border border-slate-200 object-cover"
+            className="w-full rounded-xl border border-black/5 object-cover"
           />
         ))}
       </div>
 
       {submission.note && (
-        <p className="rounded-lg bg-slate-100 p-3 text-sm text-slate-700">
+        <p className="rounded-lg bg-black/5 p-3 text-sm text-ink">
           <span className="font-medium">Note:</span> {submission.note}
         </p>
       )}
 
       {/* AI result */}
       {submission.aiError ? (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+        <div className="rounded-lg border border-black/5 bg-black/[0.03] p-4 text-sm text-ink-soft">
           AI evaluation couldn&rsquo;t run for this submission — it needs manual
           review.
-          <span className="mt-1 block text-xs text-slate-400">
+          <span className="mt-1 block text-xs text-ink-soft">
             {submission.aiError}
           </span>
         </div>
@@ -60,13 +60,13 @@ export function SubmissionFeedback({
               {overallStatusStyle[submission.aiOverallStatus].label}
             </span>
             {submission.aiScore != null && (
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-ink-soft">
                 Score: <span className="font-semibold">{submission.aiScore}</span>/100
               </span>
             )}
           </div>
 
-          <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white">
+          <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-black/5 bg-white">
             {submission.itemResults.map((item) => {
               const style = itemStatusStyle[item.status];
               return (
@@ -74,7 +74,7 @@ export function SubmissionFeedback({
                   <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${style.dot}`} />
                   <div className="flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="font-medium text-slate-800">{item.standardText}</p>
+                      <p className="font-medium text-ink">{item.standardText}</p>
                       <span
                         className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${style.badge}`}
                       >
@@ -82,7 +82,7 @@ export function SubmissionFeedback({
                       </span>
                     </div>
                     {item.feedback && (
-                      <p className="mt-0.5 text-sm text-slate-500">{item.feedback}</p>
+                      <p className="mt-0.5 text-sm text-ink-soft">{item.feedback}</p>
                     )}
                   </div>
                 </li>
@@ -91,10 +91,10 @@ export function SubmissionFeedback({
           </ul>
         </div>
       ) : (
-        <p className="text-sm text-slate-500">No AI evaluation available.</p>
+        <p className="text-sm text-ink-soft">No AI evaluation available.</p>
       )}
 
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-ink-soft">
         Submitted {formatDate(submission.createdAt)}
       </p>
     </div>

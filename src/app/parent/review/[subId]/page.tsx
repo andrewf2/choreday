@@ -34,7 +34,7 @@ export default async function ReviewPage({
       <div>
         <Link
           href={`/parent/chores/${submission.choreId}`}
-          className="text-sm text-slate-500 hover:text-slate-700"
+          className="text-sm text-ink-soft hover:text-ink"
         >
           ‹ Back to chore
         </Link>
@@ -48,7 +48,7 @@ export default async function ReviewPage({
             {statusStyle.label}
           </span>
         </div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           Submitted by {submission.chore.assignedChild.name}
           {submission.parentOverridden && " · you overrode the AI"}
         </p>
@@ -56,11 +56,11 @@ export default async function ReviewPage({
 
       <SubmissionFeedback submission={submission} />
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4">
-        <p className="mb-1 text-sm font-medium text-slate-700">
+      <div className="rounded-xl border border-black/5 bg-white p-4">
+        <p className="mb-1 text-sm font-medium text-ink">
           You have the final say
         </p>
-        <p className="mb-4 text-sm text-slate-500">
+        <p className="mb-4 text-sm text-ink-soft">
           Approve or reject this submission. You can override the AI&rsquo;s
           assessment either way.
         </p>
@@ -93,7 +93,7 @@ export default async function ReviewPage({
             </form>
           </div>
         ) : (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-ink-soft">
             You {submission.status === "APPROVED" ? "approved" : "rejected"} this
             submission. Re-open the chore by having your child submit again.
           </p>

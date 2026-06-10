@@ -1,19 +1,77 @@
 @import "tailwindcss";
 
-:root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-}
+@theme {
+  /* Warm, playful palette */
+  --color-cream: #faf0e1;
+  --color-card: #ffffff;
+  --color-ink: #2b1a12;
+  --color-ink-soft: #8a7c70;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-coral: #f1542c;
+  --color-coral-dark: #c8401d;
+  --color-amber: #f6a623;
+  --color-amber-dark: #a9711a;
+  --color-teal: #1fb8a0;
+  --color-teal-dark: #128071;
+
+  /* Fonts (provided by next/font in layout.tsx) */
+  --font-sans: var(--font-dm), system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-dm), system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, Arial, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* Chunky display headings */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+@layer components {
+  /* White rounded card with a soft warm shadow */
+  .card {
+    @apply rounded-3xl border border-black/5 bg-white;
+    box-shadow: 0 8px 24px -12px rgba(43, 26, 18, 0.18);
+  }
+
+  /* Form inputs */
+  .input {
+    @apply w-full rounded-2xl border border-black/10 bg-white px-4 py-2.5 text-sm text-ink shadow-sm;
+    @apply placeholder:text-ink-soft/60 focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral/30;
+  }
+
+  /* Pressable primary button (coral with a darker bottom edge) */
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-coral px-5 py-3 text-sm font-bold text-white transition;
+    box-shadow: 0 4px 0 0 var(--color-coral-dark);
+  }
+  .btn-primary:hover {
+    @apply bg-coral-dark;
+    box-shadow: 0 4px 0 0 #a8350f;
+  }
+  .btn-primary:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 0 var(--color-coral-dark);
+  }
+  .btn-primary:disabled {
+    @apply cursor-not-allowed opacity-60;
+    transform: none;
+  }
+
+  /* Secondary / outline button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-bold text-ink shadow-sm transition hover:bg-black/[0.03];
+  }
+
+  /* Status / label pill */
+  .pill {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold;
+  }
 }

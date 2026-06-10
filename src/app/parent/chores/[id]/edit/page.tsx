@@ -34,12 +34,12 @@ export default async function EditChorePage({
       <div>
         <Link
           href={`/parent/chores/${chore.id}`}
-          className="text-sm text-slate-500 hover:text-slate-700"
+          className="text-sm text-ink-soft hover:text-ink"
         >
           ‹ Back
         </Link>
         <h1 className="mt-1 text-2xl font-bold tracking-tight">Edit chore</h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           Changes apply to future submissions. Past reviews keep their original
           standards.
         </p>

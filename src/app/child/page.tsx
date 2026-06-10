@@ -22,7 +22,7 @@ export default async function ChildDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Hi {user.name} 👋</h1>
-        <p className="text-sm text-slate-500">Here are your chores.</p>
+        <p className="text-sm text-ink-soft">Here are your chores.</p>
       </div>
 
       <Section title="To do" chores={todo} accent="text-blue-600" cta />
@@ -30,7 +30,7 @@ export default async function ChildDashboard() {
       <Section title="Completed" chores={done} accent="text-emerald-600" />
 
       {chores.length === 0 && (
-        <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+        <p className="rounded-xl border border-dashed border-black/5 p-4 text-sm text-ink-soft">
           No chores assigned yet.
         </p>
       )}
@@ -65,17 +65,17 @@ function Section({
           <li key={c.id}>
             <Link
               href={`/child/chores/${c.id}`}
-              className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:shadow"
+              className="flex items-center justify-between card p-4 transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <div>
                 <p className="font-medium">{c.name}</p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-ink-soft">
                   {c.standards.length} standard
                   {c.standards.length === 1 ? "" : "s"} to meet
                 </p>
               </div>
               {cta ? (
-                <span className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white">
+                <span className="pill bg-coral text-white">
                   Open
                 </span>
               ) : (

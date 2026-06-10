@@ -38,13 +38,13 @@ export default async function ParentDashboard() {
         <div className="flex items-center gap-2">
           <Link
             href="/parent/children"
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="rounded-lg border border-black/10 bg-white px-4 py-2 text-sm font-medium text-ink shadow-sm transition hover:bg-black/[0.03]"
           >
             Kids
           </Link>
           <Link
             href="/parent/chores/new"
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+            className="btn-primary"
           >
             + New chore
           </Link>
@@ -63,11 +63,11 @@ export default async function ParentDashboard() {
               <li key={submission.id}>
                 <Link
                   href={`/parent/review/${submission.id}`}
-                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:shadow"
+                  className="flex items-center justify-between card p-4 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div>
                     <p className="font-medium">{chore.name}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-ink-soft">
                       {chore.assignedChild.name} · submitted{" "}
                       {formatDate(submission.createdAt)}
                     </p>
@@ -81,11 +81,11 @@ export default async function ParentDashboard() {
                         {submission.aiScore != null && ` · ${submission.aiScore}`}
                       </Badge>
                     ) : (
-                      <Badge className="bg-slate-100 text-slate-700 border-slate-200">
+                      <Badge className="bg-black/5 text-ink border-black/5">
                         Manual review
                       </Badge>
                     )}
-                    <span className="text-slate-400">›</span>
+                    <span className="text-ink-soft">›</span>
                   </div>
                 </Link>
               </li>
@@ -115,7 +115,7 @@ function ChoreListSection({
 }) {
   return (
     <section>
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-soft">
         {title} ({chores.length})
       </h2>
       {chores.length === 0 ? (
@@ -126,11 +126,11 @@ function ChoreListSection({
             <li key={c.id}>
               <Link
                 href={`/parent/chores/${c.id}`}
-                className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:shadow"
+                className="flex items-center justify-between card p-4 transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div>
                   <p className="font-medium">{c.name}</p>
-                  <p className="text-sm text-slate-500">{c.assignedChild.name}</p>
+                  <p className="text-sm text-ink-soft">{c.assignedChild.name}</p>
                 </div>
                 <Badge className={choreStatusStyle[c.status].badge}>
                   {choreStatusStyle[c.status].label}
@@ -162,7 +162,7 @@ function Badge({
 
 function Empty({ children }: { children: React.ReactNode }) {
   return (
-    <p className="rounded-xl border border-dashed border-slate-200 bg-white/50 p-4 text-sm text-slate-500">
+    <p className="rounded-xl border border-dashed border-black/5 bg-white/50 p-4 text-sm text-ink-soft">
       {children}
     </p>
   );

@@ -32,7 +32,7 @@ export default async function ChildSubmissionView({
       <div>
         <Link
           href={`/child/chores/${submission.choreId}`}
-          className="text-sm text-slate-500 hover:text-slate-700"
+          className="text-sm text-ink-soft hover:text-ink"
         >
           ‹ Back to chore
         </Link>
@@ -46,7 +46,7 @@ export default async function ChildSubmissionView({
             {statusStyle.label}
           </span>
         </div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           {submission.status === "PENDING_REVIEW"
             ? "Here's the AI's check. Your parent will make the final call."
             : submission.status === "APPROVED"
@@ -60,7 +60,7 @@ export default async function ChildSubmissionView({
       {submission.status === "REJECTED" && (
         <Link
           href={`/child/chores/${submission.choreId}/submit`}
-          className="block rounded-lg bg-indigo-600 px-4 py-3 text-center text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+          className="btn-primary w-full"
         >
           Try again
         </Link>

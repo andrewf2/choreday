@@ -86,7 +86,7 @@ export function SubmitForm({
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1 block text-sm font-medium text-ink">
           Photo(s)
         </label>
         <input
@@ -96,7 +96,7 @@ export function SubmitForm({
           capture="environment"
           multiple
           onChange={onFilesChange}
-          className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
+          className="block w-full text-sm text-ink-soft file:mr-3 file:rounded-lg file:border-0 file:bg-coral/10 file:px-4 file:py-2 file:text-sm file:font-medium file:text-coral hover:file:bg-coral/20"
         />
       </div>
 
@@ -108,22 +108,22 @@ export function SubmitForm({
               key={i}
               src={src}
               alt="Preview"
-              className="w-full rounded-xl border border-slate-200 object-cover"
+              className="w-full rounded-xl border border-black/5 object-cover"
             />
           ))}
         </div>
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
-          Note <span className="text-xs font-normal text-slate-400">(optional)</span>
+        <label className="mb-1 block text-sm font-medium text-ink">
+          Note <span className="text-xs font-normal text-ink-soft">(optional)</span>
         </label>
         <textarea
           ref={noteRef}
           name="note"
           rows={2}
           placeholder="Anything you want your parent or the AI to know?"
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral"
         />
       </div>
 
@@ -136,7 +136,7 @@ export function SubmitForm({
       <button
         type="submit"
         disabled={busy || !hasPhoto}
-        className="w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="btn-primary w-full"
       >
         {preparing
           ? "Preparing photo…"

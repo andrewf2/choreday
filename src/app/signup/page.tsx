@@ -15,7 +15,7 @@ const ERRORS: Record<string, string> = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500";
+  "w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral";
 
 export default async function SignupPage({
   searchParams,
@@ -31,7 +31,7 @@ export default async function SignupPage({
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-12">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Create your family</h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-ink-soft">
           Sign up as a parent. You can add your kids once you&rsquo;re in.
         </p>
       </div>
@@ -44,10 +44,10 @@ export default async function SignupPage({
 
       <form
         action={signup}
-        className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+        className="space-y-4 card p-6"
       >
         <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-ink">
             Your name
           </label>
           <input id="name" name="name" required placeholder="Sam" className={inputClass} />
@@ -55,7 +55,7 @@ export default async function SignupPage({
         <div>
           <label
             htmlFor="username"
-            className="mb-1 block text-sm font-medium text-slate-700"
+            className="mb-1 block text-sm font-medium text-ink"
           >
             Username
           </label>
@@ -72,7 +72,7 @@ export default async function SignupPage({
         <div>
           <label
             htmlFor="password"
-            className="mb-1 block text-sm font-medium text-slate-700"
+            className="mb-1 block text-sm font-medium text-ink"
           >
             Password
           </label>
@@ -89,7 +89,7 @@ export default async function SignupPage({
         <div>
           <label
             htmlFor="confirm"
-            className="mb-1 block text-sm font-medium text-slate-700"
+            className="mb-1 block text-sm font-medium text-ink"
           >
             Confirm password
           </label>
@@ -105,15 +105,15 @@ export default async function SignupPage({
         </div>
         <button
           type="submit"
-          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+          className="btn-primary w-full"
         >
           Create account
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-ink-soft">
         Already have an account?{" "}
-        <Link href="/" className="font-medium text-indigo-600 hover:text-indigo-700">
+        <Link href="/" className="font-medium text-coral hover:text-coral">
           Log in
         </Link>
       </p>

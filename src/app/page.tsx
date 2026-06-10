@@ -20,7 +20,7 @@ export default async function LoginPage({
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-12">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Chore Checker AI</h1>
-        <p className="mt-2 text-slate-600">Log in to continue.</p>
+        <p className="mt-2 text-ink-soft">Log in to continue.</p>
       </div>
 
       {error && (
@@ -33,12 +33,12 @@ export default async function LoginPage({
 
       <form
         action={login}
-        className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+        className="space-y-4 card p-6"
       >
         <div>
           <label
             htmlFor="username"
-            className="mb-1 block text-sm font-medium text-slate-700"
+            className="mb-1 block text-sm font-medium text-ink"
           >
             Username
           </label>
@@ -48,13 +48,13 @@ export default async function LoginPage({
             autoComplete="username"
             autoCapitalize="none"
             required
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral"
           />
         </div>
         <div>
           <label
             htmlFor="password"
-            className="mb-1 block text-sm font-medium text-slate-700"
+            className="mb-1 block text-sm font-medium text-ink"
           >
             Password
           </label>
@@ -64,28 +64,28 @@ export default async function LoginPage({
             type="password"
             autoComplete="current-password"
             required
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral"
           />
         </div>
         <button
           type="submit"
-          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+          className="btn-primary w-full"
         >
           Log in
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-ink-soft">
         New here?{" "}
         <Link
           href="/signup"
-          className="font-medium text-indigo-600 hover:text-indigo-700"
+          className="font-medium text-coral hover:text-coral"
         >
           Create a family account
         </Link>
       </p>
 
-      <p className="mt-4 text-center text-xs text-slate-400">
+      <p className="mt-4 text-center text-xs text-ink-soft">
         Demo logins: <span className="font-mono">sam</span>,{" "}
         <span className="font-mono">ava</span>,{" "}
         <span className="font-mono">leo</span> — password{" "}

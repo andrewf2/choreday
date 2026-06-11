@@ -18,6 +18,15 @@ export default async function SubmitPage({
   const { error } = await searchParams;
   const user = (await getCurrentUser())!;
 
+  const errorMessages: Record<string, string> = {
+    type: "That file type isn't supported. Use a JPEG, PNG, GIF, or WebP image.",
+    nophoto: "Please add at least one photo.",
+    person:
+      "It looks like there's a person in your photo. For safety, photos can only show the chore — no people. Please retake it showing just the room or task, and try again.",
+    aifail:
+      "We couldn't check your photo just now. It wasn't saved — please try again in a moment.",
+  };
+
   const chore = await prisma.chore.findFirst({
     where: { id, assignedChildId: user.id },
     include: { standards: { orderBy: { order: "asc" } } },
@@ -41,7 +50,7 @@ export default async function SubmitPage({
         </p>
       </div>
 
-      <section className="rounded-xl border border-black/5 bg-white p-4">
+      <section className="card p-4">
         <h2 className="mb-2 text-sm font-semibold text-ink">
           Make sure your photo shows:
         </h2>
@@ -50,13 +59,14 @@ export default async function SubmitPage({
             <li key={s.id}>{s.text}</li>
           ))}
         </ul>
+        <p className="mt-3 rounded-lg bg-amber/15 px-3 py-2 text-xs font-medium text-amber-dark">
+          📷 Photos must show only the chore — please don&rsquo;t include any people.
+        </p>
       </section>
 
       {error && (
         <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {error === "type"
-            ? "That file type isn't supported. Use a JPEG, PNG, GIF, or WebP image."
-            : "Please choose at least one photo."}
+          {errorMessages[error] ?? "Something went wrong. Please try again."}
         </p>
       )}
 

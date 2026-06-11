@@ -14,6 +14,8 @@ export interface EvaluationResult {
   score: number;
   overallStatus: OverallStatus;
   items: EvaluationItem[];
+  // Child-safety: true if any person appears to be visible in the photo(s).
+  containsPerson: boolean;
 }
 
 export interface ChoreToEvaluate {
@@ -49,11 +51,18 @@ Scoring:
 - "score" is 0-100, your overall sense of how well the chore was completed based on the standards that could be verified.
 - "overallStatus": "pass" if essentially all verifiable standards are done; "needs_work" if some are not done or several are unclear; "fail" if most verifiable standards are not done.
 
+CHILD-SAFETY CHECK (very important):
+- Set "containsPerson" to true if ANY person is visible in ANY of the photos — a face, body, body part (hand, arm, leg, foot), silhouette, or a reflection of a person in a mirror/screen/window.
+- These are supposed to be photos of a chore (a room, a surface, an object) with NO people in them.
+- Err strongly on the side of caution: if you are at all uncertain whether a person is present, set "containsPerson" to true. A false alarm is acceptable; missing a person is not.
+- Pets/animals do NOT count as a person.
+
 You are a helper, not the final authority — a parent reviews your assessment.`;
 
 const RESPONSE_SCHEMA = {
   type: "object",
   properties: {
+    containsPerson: { type: "boolean" },
     score: { type: "integer" },
     overallStatus: { type: "string", enum: ["pass", "needs_work", "fail"] },
     items: {
@@ -70,7 +79,7 @@ const RESPONSE_SCHEMA = {
       },
     },
   },
-  required: ["score", "overallStatus", "items"],
+  required: ["containsPerson", "score", "overallStatus", "items"],
   additionalProperties: false,
 } as const;
 

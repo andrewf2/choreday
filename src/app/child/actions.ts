@@ -8,7 +8,7 @@ import { saveUpload, isSupportedImageType } from "@/lib/storage";
 import {
   evaluateSubmission,
   type PhotoInput,
-  type ItemStatus,
+  type EvaluationResult,
 } from "@/lib/ai/evaluate";
 
 // Submit a photo for a chore, run AI evaluation, and persist the result.
@@ -33,33 +33,29 @@ export async function createSubmission(formData: FormData) {
     redirect(`/child/chores/${choreId}/submit?error=nophoto`);
   }
 
-  // Save photos to disk and collect base64 for the AI call.
-  const savedPhotos: { path: string; mediaType: string }[] = [];
+  // Read photos into memory ONLY — nothing is written to disk until the
+  // child-safety check passes, so a photo with a person is never persisted.
+  const pending: { bytes: Buffer; mediaType: string }[] = [];
   const aiPhotos: PhotoInput[] = [];
   for (const file of files) {
     if (!isSupportedImageType(file.type)) continue;
     const bytes = Buffer.from(await file.arrayBuffer());
-    const path = await saveUpload(bytes, file.type);
-    savedPhotos.push({ path, mediaType: file.type });
+    pending.push({ bytes, mediaType: file.type });
     aiPhotos.push({
       data: bytes.toString("base64"),
       mediaType: file.type as PhotoInput["mediaType"],
     });
   }
 
-  if (savedPhotos.length === 0) {
+  if (pending.length === 0) {
     redirect(`/child/chores/${choreId}/submit?error=type`);
   }
 
-  // Run the AI evaluation. On failure, fall back to manual review.
-  let aiScore: number | null = null;
-  let aiOverallStatus: "pass" | "needs_work" | "fail" | null = null;
-  let aiError: string | null = null;
-  let items: { standardText: string; status: ItemStatus; feedback: string; order: number }[] =
-    [];
-
+  // Run the AI evaluation (includes the child-safety person check) BEFORE
+  // storing anything. redirect() throws, so call it outside the try/catch.
+  let result: EvaluationResult | null = null;
   try {
-    const result = await evaluateSubmission(
+    result = await evaluateSubmission(
       {
         name: chore.name,
         description: chore.description,
@@ -69,17 +65,24 @@ export async function createSubmission(formData: FormData) {
       },
       aiPhotos,
     );
-    aiScore = result.score;
-    aiOverallStatus = result.overallStatus;
-    items = result.items.map((it, order) => ({
-      standardText: it.standard,
-      status: it.status,
-      feedback: it.feedback,
-      order,
-    }));
-  } catch (err) {
-    aiError =
-      err instanceof Error ? err.message : "AI evaluation failed; needs manual review.";
+  } catch {
+    result = null;
+  }
+
+  // If we couldn't check the photo, don't keep it — ask the child to retry.
+  if (!result) {
+    redirect(`/child/chores/${choreId}/submit?error=aifail`);
+  }
+  // Child safety: a person is visible — reject and store nothing.
+  if (result.containsPerson) {
+    redirect(`/child/chores/${choreId}/submit?error=person`);
+  }
+
+  // Safe to persist now: write the photos and create the submission.
+  const savedPhotos: { path: string; mediaType: string }[] = [];
+  for (const p of pending) {
+    const path = await saveUpload(p.bytes, p.mediaType);
+    savedPhotos.push({ path, mediaType: p.mediaType });
   }
 
   const submission = await prisma.submission.create({
@@ -88,11 +91,17 @@ export async function createSubmission(formData: FormData) {
       childId: user.id,
       note,
       status: "PENDING_REVIEW",
-      aiScore,
-      aiOverallStatus,
-      aiError,
+      aiScore: result.score,
+      aiOverallStatus: result.overallStatus,
       photos: { create: savedPhotos },
-      itemResults: { create: items },
+      itemResults: {
+        create: result.items.map((it, order) => ({
+          standardText: it.standard,
+          status: it.status,
+          feedback: it.feedback,
+          order,
+        })),
+      },
     },
   });
 

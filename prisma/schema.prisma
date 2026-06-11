@@ -68,7 +68,6 @@ model User {
 model Chore {
   id               String      @id @default(cuid())
   name             String
-  description      String      @default("")
   definitionOfDone String      @default("")
   status           ChoreStatus @default(ACTIVE)
   // Optional reward for completing the chore, in cents. 0 = no allowance.

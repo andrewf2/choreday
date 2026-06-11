@@ -59,7 +59,6 @@ export default async function EditChorePage({
         choreId={chore.id}
         initial={{
           name: chore.name,
-          description: chore.description,
           definitionOfDone: chore.definitionOfDone,
           assignedChildId: chore.assignedChildId,
           standards: chore.standards.map((s) => s.text),

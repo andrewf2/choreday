@@ -61,7 +61,6 @@ export async function createChore(formData: FormData) {
   if (!user || user.role !== "PARENT") redirect("/");
 
   const name = String(formData.get("name") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
   const definitionOfDone = String(formData.get("definitionOfDone") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
   const allowanceCents = dollarsToCents(formData.get("allowance"));
@@ -83,7 +82,6 @@ export async function createChore(formData: FormData) {
   const chore = await prisma.chore.create({
     data: {
       name,
-      description,
       definitionOfDone,
       assignedChildId,
       allowanceCents,
@@ -106,7 +104,6 @@ export async function updateChore(formData: FormData) {
 
   const choreId = String(formData.get("choreId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
   const definitionOfDone = String(formData.get("definitionOfDone") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
   const allowanceCents = dollarsToCents(formData.get("allowance"));
@@ -138,7 +135,6 @@ export async function updateChore(formData: FormData) {
       where: { id: choreId },
       data: {
         name,
-        description,
         definitionOfDone,
         assignedChildId,
         allowanceCents,

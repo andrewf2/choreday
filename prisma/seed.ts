@@ -94,7 +94,6 @@ async function main() {
   await prisma.chore.create({
     data: {
       name: "Clean Bedroom",
-      description: "Tidy up your bedroom before dinner.",
       definitionOfDone:
         "The room looks tidy: bed made, floor and surfaces clear, nothing left out.",
       assignedChildId: ava.id,
@@ -115,7 +114,6 @@ async function main() {
   await prisma.chore.create({
     data: {
       name: "Clean Bathroom",
-      description: "Give the bathroom a quick clean.",
       definitionOfDone: "The bathroom is clean and clutter-free.",
       assignedChildId: leo.id,
       createdById: parent.id,

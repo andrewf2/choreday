@@ -20,7 +20,6 @@ export interface EvaluationResult {
 
 export interface ChoreToEvaluate {
   name: string;
-  description: string;
   definitionOfDone: string;
   standards: string[];
   childNote?: string | null;
@@ -91,7 +90,6 @@ function buildPrompt(chore: ChoreToEvaluate): string {
     ? `\n\nNote from the child:\n${chore.childNote.trim()}`
     : "";
   return `Chore: ${chore.name}
-Description: ${chore.description || "(none)"}
 Definition of done: ${chore.definitionOfDone || "(none)"}
 
 Standards to evaluate (return one item per standard, in this order):

@@ -70,10 +70,6 @@ export default async function ParentChoreDetail({
         </p>
       </div>
 
-      {chore.description && (
-        <p className="text-ink">{chore.description}</p>
-      )}
-
       <section className="rounded-xl border border-black/5 bg-white p-4">
         {chore.definitionOfDone && (
           <p className="mb-3 text-sm text-ink-soft">

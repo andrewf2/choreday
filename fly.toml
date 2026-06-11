@@ -20,9 +20,11 @@ primary_region = 'dfw'
 [http_service]
   internal_port = 3500
   force_https = true
-  auto_stop_machines = 'stop'
+  # Keep the single machine always running (no scale-to-zero, no cold starts),
+  # but auto-start it on traffic if it ever stops (crash/host migration).
+  auto_stop_machines = false
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
 
 [[vm]]
   size = 'shared-cpu-1x'

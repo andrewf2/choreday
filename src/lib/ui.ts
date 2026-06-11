@@ -46,6 +46,12 @@ export const submissionStatusStyle: Record<
   REJECTED: { label: "Rejected", badge: CORAL },
 };
 
+// Cents -> "$1.50". Drops the cents for whole-dollar amounts ("$2").
+export function formatMoney(cents: number): string {
+  const dollars = cents / 100;
+  return cents % 100 === 0 ? `$${dollars}` : `$${dollars.toFixed(2)}`;
+}
+
 export function formatDate(d: Date): string {
   return new Date(d).toLocaleString(undefined, {
     month: "short",

@@ -7,6 +7,7 @@ import {
   submissionStatusStyle,
   overallStatusStyle,
   formatDate,
+  formatMoney,
 } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -45,6 +46,11 @@ export default async function ChildChoreDetail({
             {status.label}
           </span>
         </div>
+        {chore.allowanceCents > 0 && (
+          <p className="mt-1 text-sm font-semibold text-teal-dark">
+            Earn {formatMoney(chore.allowanceCents)} when this is approved 🎉
+          </p>
+        )}
       </div>
 
       {chore.description && <p className="text-ink">{chore.description}</p>}

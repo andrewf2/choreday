@@ -12,6 +12,13 @@ import {
   MIN_PASSWORD_LENGTH,
 } from "@/lib/auth";
 
+// Parse a dollar string ("2.50") into whole cents. Clamps junk/negatives to 0.
+function dollarsToCents(raw: FormDataEntryValue | null): number {
+  const n = parseFloat(String(raw ?? "").replace(/[^0-9.]/g, ""));
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return Math.round(n * 100);
+}
+
 // Create a child account linked to the signed-in parent.
 export async function createChild(formData: FormData) {
   const user = await getCurrentUser();
@@ -57,6 +64,7 @@ export async function createChore(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const definitionOfDone = String(formData.get("definitionOfDone") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
+  const allowanceCents = dollarsToCents(formData.get("allowance"));
   const standards = formData
     .getAll("standards")
     .map((s) => String(s).trim())
@@ -78,6 +86,7 @@ export async function createChore(formData: FormData) {
       description,
       definitionOfDone,
       assignedChildId,
+      allowanceCents,
       createdById: user.id,
       status: "ACTIVE",
       standards: {
@@ -100,6 +109,7 @@ export async function updateChore(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const definitionOfDone = String(formData.get("definitionOfDone") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
+  const allowanceCents = dollarsToCents(formData.get("allowance"));
   const standards = formData
     .getAll("standards")
     .map((s) => String(s).trim())
@@ -131,6 +141,7 @@ export async function updateChore(formData: FormData) {
         description,
         definitionOfDone,
         assignedChildId,
+        allowanceCents,
         standards: {
           create: standards.map((text, order) => ({ text, order })),
         },
@@ -169,20 +180,64 @@ export async function reviewSubmission(formData: FormData) {
     ((decision === "approve" && !aiSaysPass) ||
       (decision === "reject" && aiSaysPass));
 
+  // Credit the chore's allowance to the child only on a fresh approval.
+  const creditCents =
+    decision === "approve" && submission.status === "PENDING_REVIEW"
+      ? submission.chore.allowanceCents
+      : 0;
+
   await prisma.$transaction([
     prisma.submission.update({
       where: { id: submissionId },
       data: {
         status: decision === "approve" ? "APPROVED" : "REJECTED",
         parentOverridden: overridden,
+        allowanceEarnedCents: creditCents,
       },
     }),
     prisma.chore.update({
       where: { id: submission.choreId },
       data: { status: decision === "approve" ? "COMPLETED" : "ACTIVE" },
     }),
+    ...(creditCents > 0
+      ? [
+          prisma.user.update({
+            where: { id: submission.childId },
+            data: { allowanceBalanceCents: { increment: creditCents } },
+          }),
+        ]
+      : []),
   ]);
 
   revalidatePath("/parent");
+  revalidatePath("/child");
   redirect("/parent");
+}
+
+// Pay out a child's accumulated allowance: record the payout and reset to 0.
+export async function payoutChild(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "PARENT") redirect("/");
+
+  const childId = String(formData.get("childId") ?? "");
+  const child = await prisma.user.findFirst({
+    where: { id: childId, role: "CHILD", parentId: user.id },
+  });
+  if (!child) redirect("/parent/children");
+
+  if (child.allowanceBalanceCents > 0) {
+    await prisma.$transaction([
+      prisma.payout.create({
+        data: { childId: child.id, amountCents: child.allowanceBalanceCents },
+      }),
+      prisma.user.update({
+        where: { id: child.id },
+        data: { allowanceBalanceCents: 0 },
+      }),
+    ]);
+  }
+
+  revalidatePath("/parent/children");
+  revalidatePath("/child");
+  redirect("/parent/children");
 }

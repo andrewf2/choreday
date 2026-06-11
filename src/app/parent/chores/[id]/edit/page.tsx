@@ -63,6 +63,7 @@ export default async function EditChorePage({
           definitionOfDone: chore.definitionOfDone,
           assignedChildId: chore.assignedChildId,
           standards: chore.standards.map((s) => s.text),
+          allowanceCents: chore.allowanceCents,
         }}
         submitLabel="Save changes"
         submittingLabel="Saving…"

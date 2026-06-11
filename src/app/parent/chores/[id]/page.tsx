@@ -7,6 +7,7 @@ import {
   submissionStatusStyle,
   overallStatusStyle,
   formatDate,
+  formatMoney,
 } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -56,7 +57,17 @@ export default async function ParentChoreDetail({
             </Link>
           </div>
         </div>
-        <p className="text-sm text-ink-soft">Assigned to {chore.assignedChild.name}</p>
+        <p className="text-sm text-ink-soft">
+          Assigned to {chore.assignedChild.name}
+          {chore.allowanceCents > 0 && (
+            <>
+              {" · "}
+              <span className="font-semibold text-teal-dark">
+                {formatMoney(chore.allowanceCents)} allowance
+              </span>
+            </>
+          )}
+        </p>
       </div>
 
       {chore.description && (

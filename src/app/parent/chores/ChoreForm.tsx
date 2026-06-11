@@ -12,6 +12,7 @@ export interface ChoreFormInitial {
   definitionOfDone: string;
   assignedChildId: string;
   standards: string[];
+  allowanceCents: number;
 }
 
 export function ChoreForm({
@@ -118,6 +119,28 @@ export function ChoreForm({
             </option>
           ))}
         </select>
+      </Field>
+
+      <Field label="Allowance" hint="optional reward when approved">
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-ink-soft">
+            $
+          </span>
+          <input
+            name="allowance"
+            type="number"
+            min="0"
+            step="0.25"
+            inputMode="decimal"
+            defaultValue={
+              initial && initial.allowanceCents > 0
+                ? (initial.allowanceCents / 100).toString()
+                : ""
+            }
+            placeholder="0.00"
+            className={`${inputClass} pl-7`}
+          />
+        </div>
       </Field>
 
       <div>

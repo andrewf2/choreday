@@ -84,13 +84,6 @@ export default async function LoginPage({
           Create a family account
         </Link>
       </p>
-
-      <p className="mt-4 text-center text-xs text-ink-soft">
-        Demo logins: <span className="font-mono">sam</span>,{" "}
-        <span className="font-mono">ava</span>,{" "}
-        <span className="font-mono">leo</span> — password{" "}
-        <span className="font-mono">password</span>
-      </p>
     </main>
   );
 }

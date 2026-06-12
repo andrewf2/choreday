@@ -8,7 +8,6 @@ const inputClass =
 
 export interface ChoreFormInitial {
   name: string;
-  definitionOfDone: string;
   assignedChildId: string;
   standards: string[];
   allowanceCents: number;
@@ -80,17 +79,6 @@ export function ChoreForm({
           required
           defaultValue={initial?.name}
           placeholder="Clean Bedroom"
-          className={inputClass}
-        />
-      </Field>
-
-      <Field label="Definition of done" hint="Add as much detail as possible">
-        <textarea
-          name="definitionOfDone"
-          rows={3}
-          required
-          defaultValue={initial?.definitionOfDone}
-          placeholder="The room looks tidy: bed made, floor clear, nothing left out."
           className={inputClass}
         />
       </Field>

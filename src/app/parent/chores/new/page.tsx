@@ -34,7 +34,7 @@ export default async function NewChorePage({
         <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {error === "child"
             ? "Please choose a valid child."
-            : "Please fill in a name, definition of done, at least one standard, and an assigned child."}
+            : "Please fill in a name, at least one standard, and an assigned child."}
         </p>
       )}
 

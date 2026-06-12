@@ -20,7 +20,6 @@ export interface EvaluationResult {
 
 export interface ChoreToEvaluate {
   name: string;
-  definitionOfDone: string;
   standards: string[];
   childNote?: string | null;
 }
@@ -35,7 +34,7 @@ export interface PhotoInput {
 // or "claude-opus-4-8" for maximum capability).
 const MODEL = process.env.CHORE_AI_MODEL ?? "claude-sonnet-4-6";
 
-const SYSTEM_PROMPT = `You are Chore Checker AI. A parent has defined a chore with a clear "definition of done" and a checklist of standards. A child has completed the chore and uploaded one or more photos as proof.
+const SYSTEM_PROMPT = `You are Chore Checker AI. A parent has defined a chore with a checklist of standards that describe what "done" looks like. A child has completed the chore and uploaded one or more photos as proof.
 
 Your job is to evaluate the photo(s) against EACH standard, independently, based ONLY on visible evidence.
 
@@ -90,7 +89,6 @@ function buildPrompt(chore: ChoreToEvaluate): string {
     ? `\n\nNote from the child:\n${chore.childNote.trim()}`
     : "";
   return `Chore: ${chore.name}
-Definition of done: ${chore.definitionOfDone || "(none)"}
 
 Standards to evaluate (return one item per standard, in this order):
 ${standardsList}${note}

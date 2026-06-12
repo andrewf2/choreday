@@ -58,7 +58,6 @@ export async function createSubmission(formData: FormData) {
     result = await evaluateSubmission(
       {
         name: chore.name,
-        definitionOfDone: chore.definitionOfDone,
         standards: chore.standards.map((s) => s.text),
         childNote: note,
       },

@@ -61,7 +61,6 @@ export async function createChore(formData: FormData) {
   if (!user || user.role !== "PARENT") redirect("/");
 
   const name = String(formData.get("name") ?? "").trim();
-  const definitionOfDone = String(formData.get("definitionOfDone") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
   const allowanceCents = dollarsToCents(formData.get("allowance"));
   const standards = formData
@@ -69,7 +68,7 @@ export async function createChore(formData: FormData) {
     .map((s) => String(s).trim())
     .filter((s) => s.length > 0);
 
-  if (!name || !definitionOfDone || !assignedChildId || standards.length === 0) {
+  if (!name || !assignedChildId || standards.length === 0) {
     redirect("/parent/chores/new?error=missing");
   }
 
@@ -82,7 +81,6 @@ export async function createChore(formData: FormData) {
   const chore = await prisma.chore.create({
     data: {
       name,
-      definitionOfDone,
       assignedChildId,
       allowanceCents,
       createdById: user.id,
@@ -104,7 +102,6 @@ export async function updateChore(formData: FormData) {
 
   const choreId = String(formData.get("choreId") ?? "");
   const name = String(formData.get("name") ?? "").trim();
-  const definitionOfDone = String(formData.get("definitionOfDone") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
   const allowanceCents = dollarsToCents(formData.get("allowance"));
   const standards = formData
@@ -118,7 +115,7 @@ export async function updateChore(formData: FormData) {
   });
   if (!existing) redirect("/parent");
 
-  if (!name || !definitionOfDone || !assignedChildId || standards.length === 0) {
+  if (!name || !assignedChildId || standards.length === 0) {
     redirect(`/parent/chores/${choreId}/edit?error=missing`);
   }
 
@@ -135,7 +132,6 @@ export async function updateChore(formData: FormData) {
       where: { id: choreId },
       data: {
         name,
-        definitionOfDone,
         assignedChildId,
         allowanceCents,
         standards: {

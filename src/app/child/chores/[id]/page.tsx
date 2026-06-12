@@ -54,12 +54,6 @@ export default async function ChildChoreDetail({
       </div>
 
       <section className="rounded-xl border border-black/5 bg-white p-4">
-        {chore.definitionOfDone && (
-          <p className="mb-3 text-sm text-ink-soft">
-            <span className="font-medium">What done looks like:</span>{" "}
-            {chore.definitionOfDone}
-          </p>
-        )}
         <h2 className="mb-2 text-sm font-semibold text-ink">
           What you need to do
         </h2>

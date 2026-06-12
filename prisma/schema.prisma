@@ -71,6 +71,8 @@ model Chore {
   status           ChoreStatus @default(ACTIVE)
   // Optional reward for completing the chore, in cents. 0 = no allowance.
   allowanceCents   Int         @default(0)
+  // How strictly the AI grades, 1 (very lenient) .. 5 (very strict). 3 = balanced.
+  gradingStrictness Int        @default(3)
   dueDate          DateTime?
   createdAt        DateTime    @default(now())
 

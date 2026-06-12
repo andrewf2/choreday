@@ -20,6 +20,13 @@ function dollarsToCents(raw: FormDataEntryValue | null): number {
   return Math.round(n * 100);
 }
 
+// Parse the grading strictness slider (1..5), defaulting to 3.
+function parseStrictness(raw: FormDataEntryValue | null): number {
+  const n = Math.round(Number(raw));
+  if (!Number.isFinite(n)) return 3;
+  return Math.min(5, Math.max(1, n));
+}
+
 // Create a child account linked to the signed-in parent.
 export async function createChild(formData: FormData) {
   const user = await getCurrentUser();
@@ -127,6 +134,7 @@ export async function createChore(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
   const allowanceCents = dollarsToCents(formData.get("allowance"));
+  const gradingStrictness = parseStrictness(formData.get("strictness"));
   const standards = formData
     .getAll("standards")
     .map((s) => String(s).trim())
@@ -147,6 +155,7 @@ export async function createChore(formData: FormData) {
       name,
       assignedChildId,
       allowanceCents,
+      gradingStrictness,
       createdById: user.id,
       status: "ACTIVE",
       standards: {
@@ -168,6 +177,7 @@ export async function updateChore(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const assignedChildId = String(formData.get("assignedChildId") ?? "");
   const allowanceCents = dollarsToCents(formData.get("allowance"));
+  const gradingStrictness = parseStrictness(formData.get("strictness"));
   const standards = formData
     .getAll("standards")
     .map((s) => String(s).trim())
@@ -198,6 +208,7 @@ export async function updateChore(formData: FormData) {
         name,
         assignedChildId,
         allowanceCents,
+        gradingStrictness,
         standards: {
           create: standards.map((text, order) => ({ text, order })),
         },

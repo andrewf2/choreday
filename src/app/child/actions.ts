@@ -60,6 +60,7 @@ export async function createSubmission(formData: FormData) {
         name: chore.name,
         standards: chore.standards.map((s) => s.text),
         childNote: note,
+        strictness: chore.gradingStrictness,
       },
       aiPhotos,
     );

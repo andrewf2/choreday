@@ -22,6 +22,23 @@ export interface ChoreToEvaluate {
   name: string;
   standards: string[];
   childNote?: string | null;
+  // 1 (very lenient) .. 5 (very strict). Defaults to 3 (balanced).
+  strictness?: number;
+}
+
+// How the parent's strictness setting calibrates the grader. The "unclear when
+// not visible, never assume failure" rule still applies regardless of this.
+const STRICTNESS_GUIDANCE: Record<number, string> = {
+  1: "Grade VERY LENIENTLY. Give lots of benefit of the doubt: if a standard looks mostly met or the child clearly made a genuine effort, mark it \"done\". Only mark \"not_done\" when a standard is clearly and substantially unmet. Lean toward a high score and \"pass\".",
+  2: "Grade LENIENTLY. Favor the child on close calls — reasonable effort and a mostly-met standard should count as \"done\".",
+  3: "Grade in a BALANCED way. Mark \"done\" when a standard is reasonably met and \"not_done\" when it is clearly not met.",
+  4: "Grade STRICTLY. Hold a high bar: mark \"done\" only when a standard is clearly and fully met; minor shortfalls are \"not_done\".",
+  5: "Grade VERY STRICTLY. Be exacting: mark \"done\" only when a standard is unambiguously and completely met to a high standard. Any visible shortfall is \"not_done\". Be conservative with the score.",
+};
+
+function strictnessLine(strictness?: number): string {
+  const level = Math.min(5, Math.max(1, Math.round(strictness ?? 3)));
+  return STRICTNESS_GUIDANCE[level];
 }
 
 export interface PhotoInput {
@@ -89,6 +106,8 @@ function buildPrompt(chore: ChoreToEvaluate): string {
     ? `\n\nNote from the child:\n${chore.childNote.trim()}`
     : "";
   return `Chore: ${chore.name}
+
+Grading strictness (set by the parent): ${strictnessLine(chore.strictness)}
 
 Standards to evaluate (return one item per standard, in this order):
 ${standardsList}${note}

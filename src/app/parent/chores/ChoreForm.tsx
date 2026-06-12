@@ -11,7 +11,16 @@ export interface ChoreFormInitial {
   assignedChildId: string;
   standards: string[];
   allowanceCents: number;
+  gradingStrictness: number;
 }
+
+const STRICTNESS_LABELS: Record<number, string> = {
+  1: "Very lenient",
+  2: "Lenient",
+  3: "Balanced",
+  4: "Strict",
+  5: "Very strict",
+};
 
 export function ChoreForm({
   action,
@@ -30,6 +39,9 @@ export function ChoreForm({
 }) {
   const [standards, setStandards] = useState<string[]>(
     initial && initial.standards.length > 0 ? initial.standards : [""],
+  );
+  const [strictness, setStrictness] = useState<number>(
+    initial?.gradingStrictness ?? 3,
   );
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   // Index of a standard input to focus after the next render (e.g. one we just added).
@@ -119,6 +131,35 @@ export function ChoreForm({
           />
         </div>
       </Field>
+
+      <div>
+        <div className="mb-1 flex items-center justify-between">
+          <label
+            htmlFor="strictness"
+            className="block text-sm font-medium text-ink"
+          >
+            AI grading strictness
+          </label>
+          <span className="pill bg-coral/10 text-coral">
+            {STRICTNESS_LABELS[strictness]}
+          </span>
+        </div>
+        <input
+          id="strictness"
+          name="strictness"
+          type="range"
+          min={1}
+          max={5}
+          step={1}
+          value={strictness}
+          onChange={(e) => setStrictness(Number(e.target.value))}
+          className="w-full accent-coral"
+        />
+        <div className="mt-1 flex justify-between text-xs text-ink-soft">
+          <span>Lenient</span>
+          <span>Strict</span>
+        </div>
+      </div>
 
       <div>
         <label className="mb-1 block text-sm font-medium text-ink">

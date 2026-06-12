@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
+import { deleteUpload } from "@/lib/storage";
 import {
   hashPassword,
   normalizeUsername,
@@ -52,6 +53,69 @@ export async function createChild(formData: FormData) {
   });
 
   revalidatePath("/parent");
+  redirect("/parent/children");
+}
+
+// Reassign a chore to a different child in the family. Parent-only.
+export async function reassignChore(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "PARENT") redirect("/");
+
+  const choreId = String(formData.get("choreId") ?? "");
+  const newChildId = String(formData.get("assignedChildId") ?? "");
+
+  const chore = await prisma.chore.findFirst({
+    where: { id: choreId, createdById: user.id },
+  });
+  if (!chore) redirect("/parent");
+
+  // The new assignee must be one of this parent's children.
+  const child = await prisma.user.findFirst({
+    where: { id: newChildId, role: "CHILD", parentId: user.id },
+  });
+  if (child && newChildId !== chore.assignedChildId) {
+    await prisma.chore.update({
+      where: { id: choreId },
+      data: { assignedChildId: newChildId },
+    });
+  }
+
+  revalidatePath("/parent");
+  revalidatePath(`/parent/chores/${choreId}`);
+  redirect(`/parent/chores/${choreId}`);
+}
+
+// Remove a child account and all of their data (chores, submissions, photos,
+// payouts). Parent-only. Destructive and irreversible.
+export async function deleteChild(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "PARENT") redirect("/");
+
+  const childId = String(formData.get("childId") ?? "");
+  const child = await prisma.user.findFirst({
+    where: { id: childId, role: "CHILD", parentId: user.id },
+  });
+  if (!child) redirect("/parent/children");
+
+  // Collect the child's photo paths so we can delete the files after the rows.
+  const photos = await prisma.submissionPhoto.findMany({
+    where: { submission: { childId } },
+    select: { path: true },
+  });
+
+  // Delete dependents first (FKs aren't cascade-from-User), then the user.
+  await prisma.$transaction([
+    prisma.submission.deleteMany({ where: { childId } }), // cascades photos + itemResults
+    prisma.chore.deleteMany({ where: { assignedChildId: childId } }), // cascades standards
+    prisma.payout.deleteMany({ where: { childId } }),
+    prisma.user.delete({ where: { id: childId } }),
+  ]);
+
+  // Remove the orphaned photo files from disk (privacy: kids' photos go too).
+  await Promise.all(photos.map((p) => deleteUpload(p.path)));
+
+  revalidatePath("/parent");
+  revalidatePath("/parent/children");
   redirect("/parent/children");
 }
 

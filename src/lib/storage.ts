@@ -46,6 +46,18 @@ export async function readUpload(
   }
 }
 
+// Delete a stored upload by its relative path. Guards against path traversal;
+// silently ignores missing files.
+export async function deleteUpload(relativePath: string): Promise<void> {
+  const resolved = path.resolve(UPLOAD_DIR, relativePath);
+  if (!resolved.startsWith(UPLOAD_DIR + path.sep)) return;
+  try {
+    await fs.unlink(resolved);
+  } catch {
+    // already gone — fine
+  }
+}
+
 export function mimeForPath(relativePath: string): string {
   const ext = path.extname(relativePath).slice(1).toLowerCase();
   const entry = Object.entries(EXT_BY_MIME).find(([, e]) => e === ext);

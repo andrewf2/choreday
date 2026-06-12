@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
 import { payoutChild } from "@/app/parent/actions";
+import { DeleteChildButton } from "@/components/DeleteChildButton";
 import { formatMoney } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -55,13 +56,16 @@ export default async function ChildrenPage() {
                 </div>
               </div>
               {c.allowanceBalanceCents > 0 && (
-                <form action={payoutChild} className="mt-3 border-t border-black/5 pt-3">
+                <form action={payoutChild} className="mt-3">
                   <input type="hidden" name="childId" value={c.id} />
                   <button type="submit" className="btn-secondary w-full">
                     Mark {formatMoney(c.allowanceBalanceCents)} paid out
                   </button>
                 </form>
               )}
+              <div className="mt-3 flex justify-end border-t border-black/5 pt-3">
+                <DeleteChildButton childId={c.id} childName={c.name} />
+              </div>
             </li>
           ))}
         </ul>

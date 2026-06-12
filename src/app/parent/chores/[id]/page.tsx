@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
+import { reassignChore } from "@/app/parent/actions";
 import {
   choreStatusStyle,
   submissionStatusStyle,
@@ -32,6 +33,11 @@ export default async function ParentChoreDetail({
     },
   });
   if (!chore) notFound();
+
+  const children = await prisma.user.findMany({
+    where: { role: "CHILD", parentId: user.id },
+    orderBy: { name: "asc" },
+  });
 
   const status = choreStatusStyle[chore.status];
 
@@ -78,6 +84,34 @@ export default async function ParentChoreDetail({
           ))}
         </ul>
       </section>
+
+      {children.length > 1 && (
+        <form
+          action={reassignChore}
+          className="flex flex-wrap items-end gap-3 rounded-xl border border-black/5 bg-white p-4"
+        >
+          <input type="hidden" name="choreId" value={chore.id} />
+          <div className="flex-1">
+            <label className="mb-1 block text-sm font-medium text-ink">
+              Reassign to
+            </label>
+            <select
+              name="assignedChildId"
+              defaultValue={chore.assignedChildId}
+              className="w-full rounded-2xl border border-black/10 bg-white px-4 py-2.5 text-sm text-ink shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral/30"
+            >
+              {children.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="btn-secondary">
+            Reassign
+          </button>
+        </form>
+      )}
 
       <section>
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-soft">

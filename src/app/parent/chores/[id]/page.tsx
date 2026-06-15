@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
-import { reassignChore } from "@/app/parent/actions";
+import { reassignChore, reactivateChore } from "@/app/parent/actions";
 import {
   choreStatusStyle,
   submissionStatusStyle,
@@ -55,6 +55,17 @@ export default async function ParentChoreDetail({
             >
               {status.label}
             </span>
+            {chore.status === "COMPLETED" && (
+              <form action={reactivateChore}>
+                <input type="hidden" name="choreId" value={chore.id} />
+                <button
+                  type="submit"
+                  className="rounded-lg border border-coral/30 bg-coral/10 px-3 py-1.5 text-sm font-semibold text-coral transition hover:bg-coral/20"
+                >
+                  Reactivate
+                </button>
+              </form>
+            )}
             <Link
               href={`/parent/chores/${chore.id}/edit`}
               className="rounded-lg border border-black/10 bg-white px-3 py-1.5 text-sm font-medium text-ink shadow-sm transition hover:bg-black/[0.03]"

@@ -80,12 +80,34 @@ export async function reassignChore(formData: FormData) {
   const child = await prisma.user.findFirst({
     where: { id: newChildId, role: "CHILD", parentId: user.id },
   });
-  if (child && newChildId !== chore.assignedChildId) {
+  if (child) {
+    // Reassigning reopens the chore so the assignee can do it (again).
     await prisma.chore.update({
       where: { id: choreId },
-      data: { assignedChildId: newChildId },
+      data: { assignedChildId: newChildId, status: "ACTIVE" },
     });
   }
+
+  revalidatePath("/parent");
+  revalidatePath(`/parent/chores/${choreId}`);
+  redirect(`/parent/chores/${choreId}`);
+}
+
+// Reopen a chore (e.g. a completed one) so the assigned child can do it again.
+export async function reactivateChore(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "PARENT") redirect("/");
+
+  const choreId = String(formData.get("choreId") ?? "");
+  const chore = await prisma.chore.findFirst({
+    where: { id: choreId, createdById: user.id },
+  });
+  if (!chore) redirect("/parent");
+
+  await prisma.chore.update({
+    where: { id: choreId },
+    data: { status: "ACTIVE" },
+  });
 
   revalidatePath("/parent");
   revalidatePath(`/parent/chores/${choreId}`);

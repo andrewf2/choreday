@@ -66,10 +66,10 @@ Scoring:
 - "score" is 0-100, your overall sense of how well the chore was completed based on the standards that could be verified.
 - "overallStatus": "pass" if essentially all verifiable standards are done; "needs_work" if some are not done or several are unclear; "fail" if most verifiable standards are not done.
 
-CHILD-SAFETY CHECK (very important):
-- Set "containsPerson" to true if ANY person is visible in ANY of the photos — a face, body, body part (hand, arm, leg, foot), silhouette, or a reflection of a person in a mirror/screen/window.
-- These are supposed to be photos of a chore (a room, a surface, an object) with NO people in them.
-- Err strongly on the side of caution: if you are at all uncertain whether a person is present, set "containsPerson" to true. A false alarm is acceptable; missing a person is not.
+CHILD-SAFETY CHECK:
+- Set "containsPerson" to true ONLY when you are reasonably confident that a real, living human is actually present in a photo — a clearly visible face, body, or body part (hand, arm, leg, foot) of a real person, or a clear reflection of a real person in a mirror/screen/window.
+- Do NOT flag these (they are objects, not a person present in the room): dolls, action figures, stuffed animals, mannequins; drawings, cartoons, or paintings of people; and people shown inside photos, posters, books, screens, or artwork.
+- If something is ambiguous and you cannot tell whether it is an actual person versus an object or a picture, do NOT flag it. Default to false unless an actual person is clearly there.
 - Pets/animals do NOT count as a person.
 
 You are a helper, not the final authority — a parent reviews your assessment.`;

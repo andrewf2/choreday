@@ -55,6 +55,13 @@ export default async function ChildSubmissionView({
         </p>
       </div>
 
+      {submission.parentComment && (
+        <div className="card p-4">
+          <p className="text-sm font-semibold text-ink">Note from your parent</p>
+          <p className="mt-1 text-sm text-ink">{submission.parentComment}</p>
+        </div>
+      )}
+
       <SubmissionFeedback submission={submission} />
 
       {submission.status === "REJECTED" && (

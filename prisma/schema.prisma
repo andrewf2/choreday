@@ -103,6 +103,8 @@ model Submission {
   aiOverallStatus  OverallStatus?
   // True once a parent has manually overridden the AI's decision.
   parentOverridden Boolean          @default(false)
+  // Optional note the parent leaves when approving/rejecting.
+  parentComment    String?
   // Set when the AI evaluation could not run (e.g. API failure).
   aiError          String?
   // Allowance credited to the child when this submission was approved (cents).

@@ -250,6 +250,7 @@ export async function reviewSubmission(formData: FormData) {
 
   const submissionId = String(formData.get("submissionId") ?? "");
   const decision = String(formData.get("decision") ?? "");
+  const comment = String(formData.get("comment") ?? "").trim() || null;
   if (!submissionId || (decision !== "approve" && decision !== "reject")) {
     redirect("/parent");
   }
@@ -282,6 +283,7 @@ export async function reviewSubmission(formData: FormData) {
         status: decision === "approve" ? "APPROVED" : "REJECTED",
         parentOverridden: overridden,
         allowanceEarnedCents: creditCents,
+        parentComment: comment,
       },
     }),
     prisma.chore.update({

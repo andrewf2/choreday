@@ -66,37 +66,62 @@ export default async function ReviewPage({
         </p>
 
         {pending ? (
-          <div className="flex flex-wrap gap-3">
-            <form action={reviewSubmission}>
-              <input type="hidden" name="submissionId" value={submission.id} />
-              <input type="hidden" name="decision" value="approve" />
+          <form action={reviewSubmission} className="space-y-3">
+            <input type="hidden" name="submissionId" value={submission.id} />
+            <div>
+              <label
+                htmlFor="comment"
+                className="mb-1 block text-sm font-medium text-ink"
+              >
+                Comment{" "}
+                <span className="text-xs font-normal text-ink-soft">
+                  (optional — shared with your child)
+                </span>
+              </label>
+              <textarea
+                id="comment"
+                name="comment"
+                rows={2}
+                placeholder="e.g. Great job! / Please redo the closet."
+                className="w-full rounded-2xl border border-black/10 bg-white px-3.5 py-2.5 text-sm shadow-sm focus:border-coral focus:outline-none focus:ring-2 focus:ring-coral/30"
+              />
+            </div>
+            <div className="flex flex-wrap gap-3">
               <button
                 type="submit"
+                name="decision"
+                value="approve"
                 className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-700"
               >
                 {submission.aiOverallStatus === "pass"
                   ? "Approve"
                   : "Approve (override AI)"}
               </button>
-            </form>
-            <form action={reviewSubmission}>
-              <input type="hidden" name="submissionId" value={submission.id} />
-              <input type="hidden" name="decision" value="reject" />
               <button
                 type="submit"
+                name="decision"
+                value="reject"
                 className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm transition hover:bg-red-50"
               >
                 {submission.aiOverallStatus === "pass"
                   ? "Reject (override AI)"
                   : "Reject"}
               </button>
-            </form>
-          </div>
+            </div>
+          </form>
         ) : (
-          <p className="text-sm text-ink-soft">
-            You {submission.status === "APPROVED" ? "approved" : "rejected"} this
-            submission. Re-open the chore by having your child submit again.
-          </p>
+          <div className="space-y-2 text-sm text-ink-soft">
+            <p>
+              You {submission.status === "APPROVED" ? "approved" : "rejected"} this
+              submission.
+            </p>
+            {submission.parentComment && (
+              <p className="rounded-lg bg-black/5 p-3 text-ink">
+                <span className="font-medium">Your comment:</span>{" "}
+                {submission.parentComment}
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>
